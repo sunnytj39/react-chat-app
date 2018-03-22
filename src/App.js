@@ -16,7 +16,6 @@ const getReply = async (id) => {
       //credentials: 'include',
       mode: 'cors'  
     }
-
     const res = await fetch(url, options);
     const data = await res.text();
     return data;
@@ -41,7 +40,7 @@ class App extends React.PureComponent{
     posts: [{ name:'Miko', body:'hello', id:Date.now() }]
   }
 
-  // Homeに戻った時にメッセージを初期化
+  // Homeに戻った時にpostsを初期化
   handleBack() {
     this.setState({
       posts: []
@@ -55,32 +54,40 @@ class App extends React.PureComponent{
     });
   }
 
-  // state内の投稿リストに加える
-  setPost(newPost, res) {
-    // 相手の投稿
-    const reply = {
-      name: this.state.otherName,
-      body: res,
-      id: Date.now()+1
-    }
+  // postを作成する
+  makePost(name, body) {
+    return {
+      name: name,
+      body: body,
+      id: Date.now() + Math.random()*10
+    };
+  }
 
-    const myBody = this.state.body;
-    // 投稿にidを付与する
-    const newPostWithId = {
-      name: this.state.myName,
-      body: myBody,
-      id: Date.now()
-    }
+  // state内の投稿リストに加える
+  setPost(res) {
+    const otherName = this.state.otherName,
+      otherBody = res,
+      myName = this.state.myName,
+      myBody = this.state.body;
 
     this.setState({
       id: this.state.id + 1,
-      posts: [...this.state.posts, newPostWithId, reply]
+      posts: [
+        ...this.state.posts, 
+        this.makePost(myName, myBody),
+        this.makePost(otherName, otherBody)
+      ]
+    });
+
+    // フォームの内容をリセットする
+    this.setState({
+      body: ''
     });
   }
 
   // Formが作成した投稿を保存する処理
-  saveNewPost(newPost) {
-    getReply(this.state.id).then(res => this.setPost(newPost, res));
+  saveNewPost() {
+    getReply(this.state.id).then(res => this.setPost(res));
   }
 
   // 本文への入力を処理する
@@ -91,31 +98,12 @@ class App extends React.PureComponent{
   }
 
   // 投稿処理を行う
-  async handleSubmit(event) {
+  handleSubmit(event) {
+    // ボタンのデフォルトの機能を無効化
     event.preventDefault();
 
-    const name = this.state.myName;
-    const body = this.state.body;
-
-    // 本文のバリデーション
-    if ( !body || body.length === 0 ) {
-      alert("message is empty");
-      return;
-    }
-
-    // 投稿内容を作成する
-    const newPost = {
-      name,
-      body,
-    };
-
     // 投稿する
-    await this.saveNewPost(newPost);
-
-    // フォームの内容をリセットする
-    await this.setState({
-      body: ''
-    });
+    this.saveNewPost();
   }
 
   render(){

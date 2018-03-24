@@ -21,19 +21,37 @@ const renderPost = (post, myName) => {
   }
 }
 
-const List = pure( props => {
-  return (
-    <Messages>
-    { props.posts.map((post, index) => {
-      return (
-        <Message key={index}>
-        {renderPost(post, props.myName)}
-        </Message>
-      );
-    }) }
-    </Messages>
-  )
-})
+// メッセージの最下部までスクロール
+const scrollToBottom = () => {
+  const element = document.getElementById("messagesEnd");
+  element.scrollIntoView({ behavior: 'smooth' });
+}
+
+class List extends React.PureComponent {
+
+  componentDidMount() {
+    scrollToBottom();
+  }
+
+  componentDidUpdate() {
+    scrollToBottom();
+  }
+  
+  render() {
+    return (
+      <Messages>
+      { this.props.posts.map((post, index) => {
+        return (
+          <Message key={index}>
+          {renderPost(post, this.props.myName)}
+          </Message>
+        );
+      }) }
+      <MessagesEnd id="messagesEnd" />
+      </Messages>
+    )
+  }
+}
 
 const Icon = styled.img`
   width: 45px;
@@ -42,10 +60,17 @@ const Icon = styled.img`
 
 const Messages = styled.div`
   width: 95%;
-  height: calc(100% - 100px);
+  height: calc(100% - 99px);
   overflow: scroll;
   margin: 0 auto;
  `;
+
+const MessagesEnd = styled.div`
+  width: 95%;
+  height: 1px;
+  opacity: 1;
+`;
+
 
 const Message = styled.div`
   position: relative;

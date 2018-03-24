@@ -19,7 +19,7 @@ const Back = styled(Link)`
 const OtherName = styled.div`
   margin: 0 auto;
   position: relative;
-  left: -26px;
+  left: -20px;
 `;
 
 const Wrapper = styled.div`

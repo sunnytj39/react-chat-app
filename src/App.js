@@ -24,6 +24,7 @@ const getReply = async (id) => {
   }
 }
 
+
 class App extends React.PureComponent{
   constructor(props){
     super(props);
@@ -69,6 +70,11 @@ class App extends React.PureComponent{
       otherBody = res,
       myName = this.state.myName,
       myBody = this.state.body;
+
+    if(myBody.length == 0) {
+      alert('message is empty!');
+      return;
+    }
 
     this.setState({
       id: this.state.id + 1,
